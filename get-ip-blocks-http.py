@@ -1,27 +1,28 @@
-#!/usr/bin/env python
-""" PEP8 compliant """
+#!/usr/bin/env python3
 
-import sys
-import re
-import urllib2
+# -*- coding: utf-8 -*-
+__author__ = "Marcos Cicero"
+__license__ = "BSD"
+__version__ = "1.0.1"
 
-__author__ = "bashrootshell"
-__license__ = "BSD New"
-__version__ = "1.0"
-__status__ = "Production"
+""" PEP8 Compliant - Beautiful is better than ugly. """
 
-""" Usage: ./program.py URL (optional: file)
-If a file isn't an argument, print prefixes to stdout. """
+from requests import get
+from sys import argv
+from re import findall
 
-if sys.argv[1:]:
-    webpage = urllib2.urlopen(sys.argv[1]).read()
-    ip = re.findall(r'[\d{1,3]+(?:\.[\d{1,3}]+){3}\/\d{2}', webpage)
-    if len(sys.argv) == 3:
-        for lines in ip:
-            with open(sys.argv[2], "a") as file:
-                file.write('{}\n'.format(lines))
-    elif len(sys.argv) == 2:
-        for lines in ip:
-            print lines
-else:
-    sys.exit('Provide arguments: a URL and/or a file to write results.')
+VALID_IPv4_REGEX = (r"\b(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
+r"(?:\.(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3}\b")
+
+URL = argv[1] if len(argv) == 2 else exit("Provide a valid URL.")
+
+WEBPAGE = get(URL).text
+
+IP_ADDRESSES = findall(VALID_IPv4_REGEX, WEBPAGE)
+
+with open("extracted_IPs_from_URL.txt", "a") as output:
+    output.truncate(0)
+    print(URL, file=output)
+    for IP in IP_ADDRESSES:
+        output.write(f'{IP}\n')
+        print(IP)
