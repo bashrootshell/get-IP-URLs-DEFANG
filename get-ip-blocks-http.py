@@ -23,6 +23,6 @@ IP_ADDRESSES = findall(VALID_IPv4_REGEX, WEBPAGE)
 with open("extracted_IPs_from_URL.txt", "a") as output:
     output.truncate(0)
     print(URL, file=output)
-    for IP in IP_ADDRESSES:
+    for IP in set(IP_ADDRESSES):
         output.write(f'{IP}\n')
         print(IP)
